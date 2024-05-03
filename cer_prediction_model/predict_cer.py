@@ -109,18 +109,41 @@ def load_pipeline(pipeline_path):
     with open(pipeline_path, 'rb') as file:
         return pickle.load(file)
 
+def predict_cer(text, pipeline, expected_frequencies):
+    features = extract_features_from_text(text, expected_frequencies)
+    features_df = pd.DataFrame([features])
+    return pipeline.predict(features_df)[0]
+
+def load_pipeline(pipeline_path):
+    with open(pipeline_path, 'rb') as file:
+        return pickle.load(file)
+
+def predict_cer(text_file, pipeline, expected_frequencies):
+    with open(text_file, 'r', encoding='utf-8') as file:
+        text = file.read()
+    features = extract_features_from_text(text, expected_frequencies)
+    features_df = pd.DataFrame([features])
+    cer_prediction = pipeline.predict(features_df)
+    return cer_prediction[0]
+
 def process_input(input_path, pipeline, expected_frequencies):
     path = Path(input_path)
     if path.is_dir():
+        results = []
         for file_path in path.glob('*.txt'):
-            print(f"Predicted CER for {file_path}: {predict_cer(str(file_path), pipeline, expected_frequencies)}")
+            cer = predict_cer(str(file_path), pipeline, expected_frequencies)
+            results.append({'filename': file_path.stem, 'predicted_cer': cer})
+        results_df = pd.DataFrame(results)
+        results_df.to_csv('predicted_cer_results.csv', index=False)
+        print(f"Results saved to predicted_cer_results.csv")
     elif path.is_file():
-        print(f"Predicted CER for {input_path}: {predict_cer(input_path, pipeline, expected_frequencies)}")
+        cer = predict_cer(input_path, pipeline, expected_frequencies)
+        print(f"Predicted CER for {path.stem}: {cer}")
     else:
         print("Invalid file or directory path")
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description="Predict CER from text files.")
+    parser = argparse.ArgumentParser(description="Predict CER from text files and output to CSV or terminal.")
     parser.add_argument('input_path', type=str, help="The path to a text file or a directory containing text files.")
     args = parser.parse_args()
 
@@ -130,5 +153,4 @@ if __name__ == '__main__':
     expected_frequencies = load_expected_frequencies(expected_freq_path)
     pipeline = load_pipeline(pipeline_path)
 
-    if pipeline and expected_frequencies:
-        process_input(args.input_path, pipeline, expected_frequencies)
+    process_input(args.input_path, pipeline, expected_frequencies)
