@@ -23,7 +23,7 @@ This project develops, trains, and evaluates a series of ML models to predict th
 - `substitution_hhi`: Substitution Herfindahl-Hirschman Index (paired letter analysis)
 - `percent_numeric`: Percentage of numeric characters
 - `squared_letter_devs`: Squared deviations from expected letter frequencies
-- `misspelled_interaction`: Interaction between lexical diversity and percentage of misspelled words
+- `misspelled_interaction`: Interaction between lexical complexity and percentage of misspelled words
 - `flesch_ocr`: Flesch Reading Ease score
 - `absolute_letter_devs`: Absolute deviations from expected letter frequencies
 - `percent_punctuation`: Percentage of punctuation characters
@@ -68,4 +68,4 @@ To generate a CSV of prediction data for a directory of text files:
 python predict_cer.py <absolute path to the directory containing text files>
 ```
 
-The program will output a CSV named predicted_cer_results.csv in your working directory,
+The program will output a CSV named predicted_cer_results.csv in your working directory.
