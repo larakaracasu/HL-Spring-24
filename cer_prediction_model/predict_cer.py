@@ -17,7 +17,7 @@ def calculate_readability_scores(text):
 
 def calculate_lexical_diversity(text):
     lex = LexicalRichness(text)
-    return lex.ttr  # Type-Token Ratio as a measure of lexical diversity
+    return lex.ttr
 
 def calculate_interaction_term(fk_ocr, percent_misspelled):
     misspelled_interaction = fk_ocr * percent_misspelled
